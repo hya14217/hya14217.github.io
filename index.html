@@ -14,11 +14,11 @@
     <div class="album py-5 bg-light">
       <div class="container">
         <div class="row">
-          <div class="col-md-4" v-for="i, idx in [...Array(nPhotos).keys()]">
+          <div class="col-md-4" v-for="image, idx in imageList">
             <div class="card mb-4 box-shadow">
-              <img class="card-img-top" :src="`assets/img/${i+1}.jpg`">
+              <el-image class="card-img-top" :src="image" fit="cover" :preview-src-list="imageList"></el-image>
               <div class="card-body">
-                <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
+                <p class="card-text">{{descriptions[idx]}}</p>
                 <div class="d-flex justify-content-between align-items-center">
                   <div class="btn-group">
                     <button type="button" class="btn btn-sm btn-outline-secondary">View</button>
@@ -39,12 +39,19 @@
 <!-- import JavaScript -->
 <script src="https://unpkg.com/element-ui/lib/index.js"></script>
 <script src="config.js"></script>
+<script src="assets/js/info.js"></script>
 <script>
   new Vue({
     el: '#app',
     data: function () {
       return {
-        nPhotos: 3,
+        imageList: [],
+        descriptions: config.descriptions
+      }
+    },
+    created() {
+      for (let i = 0; i < config.nPhotos; ++i) {
+        this.imageList.push(`assets/img/${i+1}.jpg`)
       }
     }
   })
