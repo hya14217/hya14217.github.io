@@ -58,21 +58,21 @@
     <div class="album py-5 bg-light">
       <div class="container">
         <div class="row">
-          <div class="col-md-4" v-for="image, idx in imageList">
+          <div class="col-md-4" v-for="photo, idx in photos">
             <div class="card mb-4 box-shadow">
-              <el-image :id="`img-${idx}`" class="card-img-top" :src="image.replace(/img/g, 'thumbnail')" fit="cover" :preview-src-list="getPreviewList(idx)"></el-image>
+              <el-image :id="`img-${idx}`" class="card-img-top" :src="`assets/thumbnail/${photo.name}`" fit="cover" :preview-src-list="project('name', (name) => `assets/img/${name}`, idx)"></el-image>
               <div class="card-body">
-                <p class="card-text">{{descriptions[idx]}}</p>
+                <p class="card-text">{{photo.description}}</p>
                 <div class="d-flex justify-content-between align-items-center">
                   <div class="btn-group">
                     <button type="button" class="btn btn-sm btn-outline-secondary" @click="preview(`img-${idx}`)">
                       预览
                     </button>
-                    <button type="button" class="btn btn-sm btn-outline-secondary" @click="viewRaw(idx)">
+                    <button type="button" class="btn btn-sm btn-outline-secondary" @click="viewRaw(photo)">
                       原图
                     </button>
                   </div>
-                  <small class="text-muted">上传时间: {{ dates[idx] }}</small>
+                  <small class="text-muted">上传时间: {{ photo.upload_time }}</small>
                 </div>
               </div>
             </div>
@@ -90,32 +90,31 @@
 <script src="assets/js/popper.min.js"></script>
 <script src="dist/js/bootstrap.min.js"></script>
 <script src="assets/js/holder.min.js"></script>
-<script src="config.js"></script>
-<script src="dates.js"></script>
+<script src="data.js"></script>
 <script>
   new Vue({
     el: '#app',
     data: function () {
       return {
-        imageList: [],
-        dates: dates,
-        descriptions: config.descriptions
+        photos: photos
       }
     },
     created() {
-      for (let i = 0; i < config.nPhotos; ++i) {
-        this.imageList.push(`assets/img/${i + 1}.jpg`)
-      }
+      
     },
     methods: {
-      viewRaw(idx) {
-        window.location.href = `assets/upload/${idx + 1}.jpg`;
+      viewRaw(photo) {
+        window.location.href = `assets/upload/${photo.name}`;
       },
       preview(id) {
         $("#" + id).click();
       },
-      getPreviewList(idx) {
-        return this.imageList.slice(idx).concat(this.imageList.slice(0, idx))
+      project(key, postprocess, beginAt=0) {
+        let result = [];
+        for (let photo of this.photos) {
+          result.push(postprocess(photo[key]));
+        }
+        return result.slice(beginAt).concat(result.slice(0, beginAt));
       }
     }
   })

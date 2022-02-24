@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <title>HY&YA's Album后台管理</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <link rel="icon" href="/favicon.svg">
+  <!-- import CSS -->
+  <link href="dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="assets/css/album.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+  <style>
+    [v-cloak] {
+      display: none;
+    }
+
+    .el-upload {
+      width: 100%;
+    }
+
+    .el-upload-dragger {
+      width: 100%;
+    }
+
+    .avatar-uploader .el-upload {
+      border: 1px dashed #d9d9d9;
+      border-radius: 6px;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .avatar-uploader .el-upload:hover {
+      border-color: #409EFF;
+    }
+
+    .avatar-uploader-icon {
+      font-size: 28px;
+      color: #8c939d;
+      width: 178px;
+      height: 178px;
+      line-height: 178px;
+      text-align: center;
+    }
+
+    .avatar {
+      width: 178px;
+      height: 178px;
+      display: block;
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="collapse bg-dark" id="navbarHeader">
+      <div class="container">
+        <div class="row">
+          <div class="col-sm-8 col-md-7 py-4">
+            <h4 class="text-white">About</h4>
+            <p class="text-muted">HY&YA's Album👬</p>
+          </div>
+          <div class="col-sm-4 offset-md-1 py-4">
+            <h4 class="text-white">Contact</h4>
+            <ul class="list-unstyled">
+              <li><a href="https://github.com/hya14217/hya14217.github.io" class="text-white">View on GitHub</a></li>
+              <li><a href="https://www.instagram.com/liadrinz/" class="text-white">YA's Instagram</a></li>
+              <li><a href="https://www.instagram.com/patrickg51/" class="text-white">HY's Instagram</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="navbar navbar-dark bg-dark box-shadow">
+      <div class="container d-flex justify-content-between">
+        <a href="#" class="navbar-brand d-flex align-items-center">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2">
+            <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+            <circle cx="12" cy="13" r="4"></circle>
+          </svg>
+          <strong>HY&YA's Album后台管理</strong>
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarHeader"
+          aria-controls="navbarHeader" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+      </div>
+    </div>
+  </header>
+  <div id="app" v-cloak>
+    <div class="album py-5 bg-light">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-4" v-for="photo, idx in photos">
+            <div class="card mb-4 box-shadow">
+              <el-image v-show="idx < photos.length - 1" :id="`img-${idx}`" class="card-img-top"
+                :src="`assets/thumbnail/${photo.name}`" fit="cover"
+                :preview-src-list="project('name', (name) => `assets/img/${name}`, idx)"></el-image>
+              <el-upload v-show="idx === photos.length - 1" class="avatar-uploader" action="/upload"
+                :show-file-list="false" :on-success="uploadSuccess" drag>
+                <i class="el-icon-plus avatar-uploader-icon"></i>
+              </el-upload>
+              <div class="card-body">
+                <p class="card-text">
+                  <el-row>
+                    <el-col :span="(idx < photos.length - 1) ? 20 : 22">
+                      <span v-show="visibility[idx]">
+                        <el-input v-model="photo.description"></el-input>
+                      </span>
+                      <span v-show="!visibility[idx]">{{photo.description}}</span>
+                    </el-col>
+                    <el-col :span="(idx < photos.length - 1) ? 4 : 2">
+                      <el-button type="text" @click="enableEdit(idx)">
+                        <i v-show="!visibility[idx]" class="el-icon-edit"></i>
+                        <i v-show="visibility[idx]" class="el-icon-check"></i>
+                      </el-button>
+                      <el-button type="text" @click="deletePhoto(idx)">
+                        <i v-if="idx < photos.length - 1" class="el-icon-delete"></i>
+                      </el-button>
+                    </el-col>
+                  </el-row>
+                </p>
+                <div class="d-flex justify-content-between align-items-center">
+                  <div class="btn-group">
+                    <button type="button" class="btn btn-sm btn-outline-secondary" @click="preview(`img-${idx}`)">
+                      预览
+                    </button>
+                    <button type="button" class="btn btn-sm btn-outline-secondary" @click="viewRaw(photo)">
+                      原图
+                    </button>
+                  </div>
+                  <small class="text-muted">上传时间: {{ photo.upload_time }}</small>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div style="text-align: center;">
+          <el-button type="primary" style="width: 100%; margin-bottom: 48px;" @click="submit">提交更改</el-button>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+<!-- import Vue before Element -->
+<script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+<!-- import JavaScript -->
+<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+<script src="assets/js/jquery-slim.min.js"></script>
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.6.0/jquery.js"></script>
+<script src="assets/js/popper.min.js"></script>
+<script src="dist/js/bootstrap.min.js"></script>
+<script src="assets/js/holder.min.js"></script>
+<script src="data.js"></script>
+<script>
+  new Vue({
+    el: '#app',
+    data: function () {
+      return {
+        photos: photos,
+        visibility: {},
+      }
+    },
+    created() {
+      this.photos.push({
+        name: "",
+        description: "<新照片描述>",
+        upload_time: new Date().toLocaleString('chinese', { hour12: false }),
+      })
+    },
+    methods: {
+      viewRaw(photo) {
+        window.location.href = `assets/upload/${photo.name}`;
+      },
+      preview(id) {
+        $("#" + id).click();
+      },
+      project(key, postprocess, beginAt = 0) {
+        let result = [];
+        for (let photo of this.photos.slice(0, this.photos.length - 1)) {
+          result.push(postprocess(photo[key]));
+        }
+        return result.slice(beginAt).concat(result.slice(0, beginAt));
+      },
+      enableEdit(idx) {
+        this.$set(this.visibility, idx, !this.visibility[idx]);
+      },
+      deletePhoto(idx) {
+        this.$confirm("确认删除这张照片吗?", {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          this.photos.splice(idx, 1);
+          this.$message({type: "success", message: "删除成功"});
+        }).catch(() => {
+
+        })
+      },
+      submit() {
+        $.ajax({
+          url: "/sync_photo_data",
+          method: "POST",
+          data: {
+            photos: JSON.stringify(this.photos.slice(0, this.photos.length - 1)),
+          },
+          success(resp) {
+            console.log(resp);
+            this.$message({type: "success", message: "提交成功"});
+          },
+          complete(resp) {
+            console.log(resp);
+            this.$message({type: "success", message: "提交成功"});
+          },
+          error(e) {
+            this.$message({type: "error", message: "提交失败"});
+          }
+        })
+      },
+      now() {
+        let now = new Date();
+        return now.toLocaleString();
+      },
+      uploadSuccess(response) {
+        this.photos[this.photos.length - 1].name = response;
+        this.photos[this.photos.length - 1].upload_time = new Date().toLocaleString('chinese', { hour12: false });
+        this.photos.push({
+          name: "",
+          description: "新照片描述",
+          upload_time: new Date().toLocaleString('chinese', { hour12: false }),
+        });
+      }
+    }
+  })
+</script>
+
+</html>
