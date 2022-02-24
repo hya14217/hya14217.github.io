@@ -206,15 +206,15 @@
           data: {
             photos: JSON.stringify(this.photos.slice(0, this.photos.length - 1)),
           },
-          success(resp) {
+          success: (resp) => {
             console.log(resp);
             this.$message({type: "success", message: "提交成功"});
           },
-          complete(resp) {
+          complete: (resp) => {
             console.log(resp);
             this.$message({type: "success", message: "提交成功"});
           },
-          error(e) {
+          error: (e) => {
             this.$message({type: "error", message: "提交失败"});
           }
         })
