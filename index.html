@@ -60,13 +60,16 @@
         <div class="row">
           <div class="col-md-4" v-for="image, idx in imageList">
             <div class="card mb-4 box-shadow">
-              <el-image class="card-img-top" :src="image.replace(/img/g, 'thumbnail')" fit="cover" :preview-src-list="imageList"></el-image>
+              <el-image :id="`img-${idx}`" class="card-img-top" :src="image.replace(/img/g, 'thumbnail')" fit="cover" :preview-src-list="getPreviewList(idx)"></el-image>
               <div class="card-body">
                 <p class="card-text">{{descriptions[idx]}}</p>
                 <div class="d-flex justify-content-between align-items-center">
                   <div class="btn-group">
+                    <button type="button" class="btn btn-sm btn-outline-secondary" @click="preview(`img-${idx}`)">
+                      预览
+                    </button>
                     <button type="button" class="btn btn-sm btn-outline-secondary" @click="viewRaw(idx)">
-                      查看原图
+                      原图
                     </button>
                   </div>
                   <small class="text-muted">上传时间: {{ dates[idx] }}</small>
@@ -107,6 +110,12 @@
     methods: {
       viewRaw(idx) {
         window.location.href = `assets/upload/${idx + 1}.jpg`;
+      },
+      preview(id) {
+        $("#" + id).click();
+      },
+      getPreviewList(idx) {
+        return this.imageList.slice(idx).concat(this.imageList.slice(0, idx))
       }
     }
   })
