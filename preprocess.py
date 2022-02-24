@@ -15,19 +15,22 @@ for img_file in Path("assets/upload").glob("*.jpg"):
     dates.append(process_datetime(mtime))
     # 压缩
     o_size = os.path.getsize(img_file) / 1024
-    outfile = os.path.join(img_file.parent.parent, "img", img_file.name)
-    if o_size <= 500:
+    thumbnail_outfile = os.path.join(img_file.parent.parent, "thumbnail", img_file.name)
+    img_outfile = os.path.join(img_file.parent.parent, "img", img_file.name)
+    if o_size <= 150:
         im = Image.open(img_file)
-        im.save(outfile, quality=80)
+        im.save(thumbnail_outfile, quality=80)
+        im.save(img_outfile, quality=80)
         continue
     quality = 80
-    while o_size > 500:
+    while o_size > 150:
         im = Image.open(img_file)
-        im.save(outfile, quality=80)
+        im.resize((1920, im.size[1]*1920//im.size[0])).save(img_outfile, quality=quality)
+        im.resize((640, im.size[1]*640//im.size[0])).save(thumbnail_outfile, quality=quality)
         if quality - 10 < 0:
             break
         quality -= 10
-        o_size = os.path.getsize(outfile) / 1024
+        o_size = os.path.getsize(thumbnail_outfile) / 1024
 
 with open("dates.js", "w", encoding="utf-8") as fout:
     fout.write(f"var dates = {str(dates)}")
