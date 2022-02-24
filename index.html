@@ -4,12 +4,51 @@
 <head>
   <meta charset="UTF-8">
   <title>HY&YA's Album</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <link rel="icon" href="favicon.svg">
   <!-- import CSS -->
-  <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
   <link href="dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="assets/css/album.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
 </head>
 
 <body>
+  <header>
+    <div class="collapse bg-dark" id="navbarHeader">
+      <div class="container">
+        <div class="row">
+          <div class="col-sm-8 col-md-7 py-4">
+            <h4 class="text-white">About</h4>
+            <p class="text-muted">HY&YA's Album👬</p>
+          </div>
+          <div class="col-sm-4 offset-md-1 py-4">
+            <h4 class="text-white">Contact</h4>
+            <ul class="list-unstyled">
+              <li><a href="https://github.com/hya14217/hya14217.github.io" class="text-white">View on GitHub</a></li>
+              <li><a href="https://www.instagram.com/liadrinz/" class="text-white">YA's Instagram</a></li>
+              <li><a href="https://www.instagram.com/patrickg51/" class="text-white">HY's Instagram</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="navbar navbar-dark bg-dark box-shadow">
+      <div class="container d-flex justify-content-between">
+        <a href="#" class="navbar-brand d-flex align-items-center">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2">
+            <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+            <circle cx="12" cy="13" r="4"></circle>
+          </svg>
+          <strong>HY&YA's Album</strong>
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarHeader"
+          aria-controls="navbarHeader" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+      </div>
+    </div>
+  </header>
   <div id="app">
     <div class="album py-5 bg-light">
       <div class="container">
@@ -21,10 +60,11 @@
                 <p class="card-text">{{descriptions[idx]}}</p>
                 <div class="d-flex justify-content-between align-items-center">
                   <div class="btn-group">
-                    <button type="button" class="btn btn-sm btn-outline-secondary">View</button>
-                    <button type="button" class="btn btn-sm btn-outline-secondary">Edit</button>
+                    <button type="button" class="btn btn-sm btn-outline-secondary" @click="viewRaw(idx)">
+                      查看原图
+                    </button>
                   </div>
-                  <small class="text-muted">9 mins</small>
+                  <small class="text-muted">上传时间: {{ dates[idx] }}</small>
                 </div>
               </div>
             </div>
@@ -38,20 +78,30 @@
 <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
 <!-- import JavaScript -->
 <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+<script src="assets/js/jquery-slim.min.js"></script>
+<script src="assets/js/popper.min.js"></script>
+<script src="dist/js/bootstrap.min.js"></script>
+<script src="assets/js/holder.min.js"></script>
 <script src="config.js"></script>
-<script src="assets/js/info.js"></script>
+<script src="dates.js"></script>
 <script>
   new Vue({
     el: '#app',
     data: function () {
       return {
         imageList: [],
+        dates: dates,
         descriptions: config.descriptions
       }
     },
     created() {
       for (let i = 0; i < config.nPhotos; ++i) {
-        this.imageList.push(`assets/img/${i+1}.jpg`)
+        this.imageList.push(`assets/img/${i + 1}.jpg`)
+      }
+    },
+    methods: {
+      viewRaw(idx) {
+        window.location.href = `assets/upload/${idx + 1}.jpg`;
       }
     }
   })
