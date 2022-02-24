@@ -10,6 +10,11 @@
   <link href="dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="assets/css/album.css" rel="stylesheet">
   <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+  <style>
+    [v-cloak] {
+      display: none;
+    }
+  </style>
 </head>
 
 <body>
@@ -49,7 +54,7 @@
       </div>
     </div>
   </header>
-  <div id="app">
+  <div id="app" v-cloak>
     <div class="album py-5 bg-light">
       <div class="container">
         <div class="row">
