@@ -57,6 +57,23 @@
   <div id="app" v-cloak>
     <div class="album py-5 bg-light">
       <div class="container">
+        <el-calendar v-model="date">
+          <template slot="dateCell" slot-scope="{date, data}">
+          <p :class="data.isSelected ? 'is-selected' : ''">
+            {{ date.getDate() }}
+            <p>
+              <el-tag type="success" v-if="date.getDate() == 14 && date.getMonth() == 8 && date.getFullYear() == 2021">在一起</el-tag>
+              <el-tag type="success" v-if="date.getDate() == 14 && date.getMonth() == 8 && date.getFullYear() - 2021 > 0">{{ date.getFullYear() - 2021 }}周年</el-tag>
+              <el-tag type="success" v-if="date.getDate() == 14 && date.getMonth() == 9 && date.getFullYear() - 2001 > 0">阳阳{{ date.getFullYear() - 2001 }}岁</el-tag>
+              <el-tag type="success" v-if="date.getDate() == 17 && date.getMonth() == 9 && date.getFullYear() - 1999 > 0">昂昂{{ date.getFullYear() - 1999 }}岁</el-tag>
+              <el-tag type="success" v-if="date.getDate() == 14 && date.getMonth() != 8 && (date.getMonth() - 8) + (date.getFullYear() - 2021) * 12 > 0">{{ (date.getMonth() - 8) + (date.getFullYear() - 2021) * 12 }}个月</el-tag>
+              <el-tag type="success" v-if="log2((new Date(date.getFullYear(), date.getMonth(), date.getDate()) - new Date(2021, 8, 14)) / 3600000 / 24) != -1">
+                {{(new Date(date.getFullYear(), date.getMonth(), date.getDate()) - new Date(2021, 8, 14)) / 3600000 / 24}}日
+              </el-tag>
+            </p>
+          </p>
+        </template>
+        </el-calendar>
         <div class="row">
           <div class="col-md-4" v-for="photo, idx in photos">
             <div class="card mb-4 box-shadow">
@@ -96,7 +113,8 @@
     el: '#app',
     data: function () {
       return {
-        photos: photos
+        photos: photos,
+        date: new Date(),
       }
     },
     created() {
@@ -115,6 +133,13 @@
           result.push(postprocess(photo[key]));
         }
         return result.slice(beginAt).concat(result.slice(0, beginAt));
+      },
+      log2(x) {
+        let n = Math.log2(x);
+        if (n == parseInt(n)) {
+          return n;
+        }
+        return -1;
       }
     }
   })
