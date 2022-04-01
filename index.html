@@ -45,7 +45,7 @@
             <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
             <circle cx="12" cy="13" r="4"></circle>
           </svg>
-          <strong>HY&YA's Album</strong>
+          <strong>HY&YA's Album (疫情快点结束吧)</strong>
         </a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarHeader"
           aria-controls="navbarHeader" aria-expanded="false" aria-label="Toggle navigation">
@@ -57,6 +57,7 @@
   <div id="app" v-cloak>
     <div class="album py-5 bg-light">
       <div class="container">
+        <h1>已经有{{ (Date.now() - new Date(2022, 0, 2)) / 3600000 / 24 }}天没有见面了</h1>
         <el-calendar v-model="date">
           <template slot="dateCell" slot-scope="{date, data}">
           <p :class="data.isSelected ? 'is-selected' : ''">
@@ -109,6 +110,7 @@
 <script src="assets/js/holder.min.js"></script>
 <script src="data.js"></script>
 <script>
+  photos.reverse();
   new Vue({
     el: '#app',
     data: function () {
