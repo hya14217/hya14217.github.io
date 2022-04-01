@@ -8,8 +8,8 @@ from preprocess import preprocess
 from hashlib import md5
 
 
-HOST = "192.168.0.104"
-PORT = 8888
+HOST = "localhost"
+PORT = 8088
 
 def web_app():
     app = Flask(__name__, static_folder="static", static_url_path="/")
