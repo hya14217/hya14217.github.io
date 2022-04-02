@@ -14,6 +14,12 @@
     [v-cloak] {
       display: none;
     }
+    .title {
+      color: black;
+    }
+    .title:hover {
+      color: #409eff;
+    }
   </style>
 </head>
 
@@ -55,26 +61,50 @@
     </div>
   </header>
   <div id="app" v-cloak>
-    <div class="album py-5 bg-light">
-      <div class="container">
-        <h1>已经有{{ parseInt((Date.now() - new Date(2022, 0, 2)) / 3600000 / 24) }}天没有见面了</h1>
-        <el-calendar v-model="date">
-          <template slot="dateCell" slot-scope="{date, data}">
-          <p :class="data.isSelected ? 'is-selected' : ''">
-            {{ date.getDate() }}
-            <p>
-              <el-tag type="success" v-if="date.getDate() == 14 && date.getMonth() == 8 && date.getFullYear() == 2021">在一起</el-tag>
-              <el-tag type="success" v-if="date.getDate() == 14 && date.getMonth() == 8 && date.getFullYear() - 2021 > 0">{{ date.getFullYear() - 2021 }}周年</el-tag>
-              <el-tag type="success" v-if="date.getDate() == 14 && date.getMonth() == 9 && date.getFullYear() - 2001 > 0">阳阳{{ date.getFullYear() - 2001 }}岁</el-tag>
-              <el-tag type="success" v-if="date.getDate() == 17 && date.getMonth() == 9 && date.getFullYear() - 1999 > 0">昂昂{{ date.getFullYear() - 1999 }}岁</el-tag>
-              <el-tag type="success" v-if="date.getDate() == 14 && date.getMonth() != 8 && (date.getMonth() - 8) + (date.getFullYear() - 2021) * 12 > 0">{{ (date.getMonth() - 8) + (date.getFullYear() - 2021) * 12 }}个月</el-tag>
-              <el-tag type="success" v-if="log2((new Date(date.getFullYear(), date.getMonth(), date.getDate()) - new Date(2021, 8, 14)) / 3600000 / 24) != -1">
-                {{(new Date(date.getFullYear(), date.getMonth(), date.getDate()) - new Date(2021, 8, 14)) / 3600000 / 24}}日
-              </el-tag>
-            </p>
+    <el-menu :default-active="nav" mode="horizontal" @select="handleNav">
+      <el-menu-item index="0">相册</el-menu-item>
+      <el-menu-item index="1">日记</el-menu-item>
+      <el-menu-item index="2">日历</el-menu-item>
+    </el-menu>
+    <div v-if="nav == 2" class="container">
+      <h1>已经有{{ parseInt((Date.now() - new Date(2022, 0, 2)) / 3600000 / 24) }}天没有见面了</h1>
+      <el-calendar v-model="date">
+        <template slot="dateCell" slot-scope="{date, data}">
+        <p :class="data.isSelected ? 'is-selected' : ''">
+          {{ date.getDate() }}
+          <p>
+            <el-tag type="success" v-if="date.getDate() == 14 && date.getMonth() == 8 && date.getFullYear() == 2021">在一起</el-tag>
+            <el-tag type="success" v-if="date.getDate() == 14 && date.getMonth() == 8 && date.getFullYear() - 2021 > 0">{{ date.getFullYear() - 2021 }}周年</el-tag>
+            <el-tag type="success" v-if="date.getDate() == 14 && date.getMonth() == 9 && date.getFullYear() - 2001 > 0">阳阳{{ date.getFullYear() - 2001 }}岁</el-tag>
+            <el-tag type="success" v-if="date.getDate() == 17 && date.getMonth() == 9 && date.getFullYear() - 1999 > 0">昂昂{{ date.getFullYear() - 1999 }}岁</el-tag>
+            <el-tag type="success" v-if="date.getDate() == 14 && date.getMonth() != 8 && (date.getMonth() - 8) + (date.getFullYear() - 2021) * 12 > 0">{{ (date.getMonth() - 8) + (date.getFullYear() - 2021) * 12 }}个月</el-tag>
+            <el-tag type="success" v-if="log2((new Date(date.getFullYear(), date.getMonth(), date.getDate()) - new Date(2021, 8, 14)) / 3600000 / 24) != -1">
+              {{(new Date(date.getFullYear(), date.getMonth(), date.getDate()) - new Date(2021, 8, 14)) / 3600000 / 24}}日
+            </el-tag>
           </p>
-        </template>
-        </el-calendar>
+        </p>
+      </template>
+      </el-calendar>
+    </div>
+    <div v-if="nav == 1" class="container">
+      <div v-show="articleShown == -1">
+        <el-card v-for="(article, idx) in parseArticles(articles)" @click.native="showArticle(idx)">
+          <el-button type="text" @click="showArticle(idx)">
+            <h2 class="title">{{article.title}}</h2>
+          </el-button>
+          <div></div>
+          <small class="text-muted">发表时间: {{ article.mtime }}</small>
+        </el-card>
+      </div>
+      <div v-show="articleShown != -1">
+        <el-button type="text" @click="back">
+          <i class="el-icon-back">返回</i>
+        </el-button>
+        <div id="show-content"></div>
+      </div>
+    </div>
+    <div v-if="nav == 0" class="album py-5 bg-light">
+      <div class="container">
         <div class="row">
           <div class="col-md-4" v-for="photo, idx in photos">
             <div class="card mb-4 box-shadow">
@@ -104,23 +134,30 @@
 <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
 <!-- import JavaScript -->
 <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 <script src="assets/js/jquery-slim.min.js"></script>
 <script src="assets/js/popper.min.js"></script>
 <script src="dist/js/bootstrap.min.js"></script>
 <script src="assets/js/holder.min.js"></script>
 <script src="data.js"></script>
+<script src="article.js"></script>
 <script>
   photos.reverse();
   new Vue({
     el: '#app',
     data: function () {
       return {
+        nav: '1',
+        articleShown: -1,
         photos: photos,
+        articles: articles,
         date: new Date(),
       }
     },
     created() {
-      
+      this.article.sort((a, b) => {
+        return Date.parse(a.mtime) > Date.parse(b.mtime);
+      })
     },
     methods: {
       viewRaw(photo) {
@@ -142,6 +179,24 @@
           return n;
         }
         return -1;
+      },
+      handleNav(key, keyPath) {
+        this.nav = key;
+      },
+      parseArticles(articles) {
+        return articles.map(article => {
+          article.title = article.content.split("\n")[0].replace(/^# /, "");
+          return article;
+        })
+      },
+      showArticle(idx) {
+        let articles = this.parseArticles(this.articles);
+        let { title, content, mtime } = articles[idx];
+        document.getElementById("show-content").innerHTML = marked.parse(content);
+        this.articleShown = idx;
+      },
+      back() {
+        this.articleShown = -1;
       }
     }
   })
