@@ -67,7 +67,7 @@
       <el-menu-item index="2">日历</el-menu-item>
     </el-menu>
     <div v-if="nav == 2" class="container">
-      <h1>已经有{{ parseInt((Date.now() - new Date(2022, 0, 2)) / 3600000 / 24) }}天没有见面了</h1>
+      <h1>已经有{{ parseInt((Date.now() - new Date(2022, 6, 19)) / 3600000 / 24) }}天没有见面了</h1>
       <el-calendar v-model="date">
         <template slot="dateCell" slot-scope="{date, data}">
         <p :class="data.isSelected ? 'is-selected' : ''">
