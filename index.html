@@ -51,7 +51,10 @@
             <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
             <circle cx="12" cy="13" r="4"></circle>
           </svg>
-          <strong>HY&YA's Album</strong>
+          <strong>
+            HY&YA's Album
+            <span v-if="new Date(Date.now()).getMonth() === 11 && new Date(Date.now()).getDate() >= 25">🎄</span>
+          </strong>
         </a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarHeader"
           aria-controls="navbarHeader" aria-expanded="false" aria-label="Toggle navigation">
@@ -67,7 +70,7 @@
       <el-menu-item index="2">日历</el-menu-item>
     </el-menu>
     <div v-if="nav == 2" class="container">
-      <h1>已经有{{ parseInt((Date.now() - new Date(2022, 6, 19)) / 3600000 / 24) }}天没有见面了</h1>
+      <h1>已经有{{ parseInt((Date.now() - new Date(2022, 10, 28)) / 3600000 / 24) }}天没有见面了</h1>
       <el-calendar v-model="date">
         <template slot="dateCell" slot-scope="{date, data}">
         <p :class="data.isSelected ? 'is-selected' : ''">
@@ -142,6 +145,10 @@
 <script src="data.js"></script>
 <script src="article.js"></script>
 <script>
+  let now = new Date(Date.now());
+  if (now.getMonth() === 11 && now.getDate() >= 25) {
+    document.getElementsByClassName("album")[0].style.background = `url("assets/special/Christmas.svg")`;
+  }
   photos.reverse();
   new Vue({
     el: '#app',
@@ -200,6 +207,7 @@
       }
     }
   })
+
 </script>
 
 </html>
